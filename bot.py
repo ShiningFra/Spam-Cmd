@@ -5,71 +5,81 @@ from dotenv import load_dotenv
 from telethon import TelegramClient
 from telethon.errors import FloodWaitError
 
-# Chargement du .env
+# Chargement du fichier .env
 load_dotenv()
 API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 TARGET_BOT = os.getenv("TARGET_BOT")
-
 GROUP_I = int(os.getenv("GROUPI")) if os.getenv("GROUPI") else None
 GROUP_II = int(os.getenv("GROUPII")) if os.getenv("GROUPII") else None
 
 if not all([API_ID, API_HASH, TARGET_BOT, GROUP_I, GROUP_II]):
     raise ValueError("❌ Erreur : Variables manquantes dans le fichier .env")
 
-# Liste des cibles : Privé, Groupe I, Groupe II
+# Liste de tes chats et de tes commandes
 TARGET_CHATS = [TARGET_BOT, GROUP_I, GROUP_II]
-
-# Liste des commandes
 COMMANDS_LIST = ["/acc", "/roue 1000", "/mescontratsbc"]
-
-# Délai de base entre CHAQUE message envoyé (très rapide car on change de chat à chaque fois)
-BASE_DELAY = 2.5
 
 async def main():
     client = TelegramClient('session_userbot', int(API_ID), API_HASH)
     await client.start()
-    print("🟩 Userbot lancé en mode DISPERSION TOTALE !")
-    print("🔄 Ordre d'envoi croisé pour tromper l'anti-spam.")
-    print("👉 CTRL + C pour couper.\n")
+    print("🟩 Userbot lancé en mode FANTÔME INTÉGRAL !")
+    print("🎭 Simulation 'Typing' + Dispersion de l'ordre + Délais dynamiques actifs.\n")
 
     try:
         while True:
-            # On prend une commande après l'autre
+            # Mélange l'ordre des groupes à chaque nouveau cycle pour détruire tout pattern linéaire
+            chats_aleatoires = TARGET_CHATS.copy()
+            random.shuffle(chats_aleatoires)
+            
             for commande in COMMANDS_LIST:
-                
-                # Et on l'envoie dans chaque chat un par un avant de passer à la commande suivante
-                for chat_id in TARGET_CHATS:
+                for chat_id in chats_aleatoires:
                     try:
-                        print(f"✈️ Chat: {chat_id} ➔ Commande: {commande}")
+                        # -----------------------------------------------------------------
+                        # 1. SIMULATION DE L'ÉCRITURE (Le fameux 'typing...')
+                        # -----------------------------------------------------------------
+                        # On définit un temps d'écriture réaliste (ex: entre 1.5 et 3.5 secondes)
+                        temps_ecriture = random.uniform(1.5, 3.5)
+                        
+                        async with client.action(chat_id, 'typing'):
+                            # Pendant que Telegram affiche "En train d'écrire...", le script patiente
+                            await asyncio.sleep(temps_ecriture)
+                        
+                        # Envoi de la commande après la simulation de frappe
+                        print(f"✈️ Chat: {chat_id} ➔ Commande: {commande} (Écrit pendant {round(temps_ecriture, 1)}s)")
                         await client.send_message(chat_id, commande)
                         
-                        # Petite variation humaine de sécurité
-                        actual_delay = BASE_DELAY + random.uniform(0.0, 0.15)
-                        await asyncio.sleep(actual_delay)
+                        # -----------------------------------------------------------------
+                        # 2. PAUSE ALÉATOIRE ENTRE CHAQUE MESSAGE
+                        # -----------------------------------------------------------------
+                        # Fini les 3s fixes. On simule le temps qu'un humain met à changer de chat (3 à 7 secondes)
+                        pause_inter_message = random.uniform(2.5, 5.5)
+                        await asyncio.sleep(pause_inter_message)
                         
                     except FloodWaitError as e:
-                        security_time = e.seconds + 10
-                        print("\n" + "!" * 50)
-                        print(f"⚠️ FLOODWAIT DETECTÉ : Repos de {security_time}s...")
-                        print("!" * 50 + "\n")
-                        await asyncio.sleep(security_time)
-                        print("▶️ Reprise du cycle...\n")
-                        
+                        # Si Telegram te met une sécurité, on l'esquive intelligemment
+                        temps_securite = e.seconds + 15
+                        print(f"\n⚠️ FLOODWAIT DETECTÉ : Repos forcé de {temps_securite}s...\n")
+                        await asyncio.sleep(temps_securite)
                     except Exception as e:
-                        print(f"❌ Erreur mineure : {e}")
-                        await asyncio.sleep(1.5)
-                        
-            # Pause de fin de cycle avant de recommencer toute la matrice
-            print("💤 Cycle complet terminé. Pause de 2 secondes...")
-            await asyncio.sleep(2.5)
+                        print(f"❌ Erreur avec le chat {chat_id} : {e}")
+                        await asyncio.sleep(4.0)
+            
+            # -----------------------------------------------------------------
+            # 3. GRANDE PAUSE DE FIN DE CYCLE
+            # -----------------------------------------------------------------
+            # Très important pour réinitialiser les compteurs de requêtes de Telegram.
+            # Le script s'endort entre 45 secondes et 1 minute 30 avant de recommencer.
+            pause_cycle = random.uniform(6.0, 15.0)
+            print(f"\n💤 Cycle terminé. L'humain lâche son téléphone pendant {round(pause_cycle, 1)}s...\n")
+            await asyncio.sleep(pause_cycle)
 
     except KeyboardInterrupt:
-        print("\n🟥 Arrêt manuel.")
+        print("\n🟥 Arrêt manuel demandé par l'utilisateur.")
     finally:
         if client.is_connected():
             await client.disconnect()
-        print("🏁 Déconnecté.")
+        print("🏁 Userbot correctement déconnecté.")
 
 if __name__ == '__main__':
     asyncio.run(main())
