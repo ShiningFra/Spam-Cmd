@@ -24,7 +24,7 @@ TARGET_CHATS = [TARGET_BOT, GROUP_I, GROUP_II]
 COMMANDS_LIST = ["/acc", "/roue 1000", "/mescontratsbc"]
 
 # Délai de base entre CHAQUE message envoyé (très rapide car on change de chat à chaque fois)
-BASE_DELAY = 0.6
+BASE_DELAY = 1.5
 
 async def main():
     client = TelegramClient('session_userbot', int(API_ID), API_HASH)
