@@ -39,7 +39,7 @@ async def main():
                         # 1. SIMULATION DE L'ÉCRITURE (Le fameux 'typing...')
                         # -----------------------------------------------------------------
                         # On définit un temps d'écriture réaliste (ex: entre 1.5 et 3.5 secondes)
-                        temps_ecriture = random.uniform(1.5, 3.5)
+                        temps_ecriture = random.uniform(1.0, 2.0)
                         
                         async with client.action(chat_id, 'typing'):
                             # Pendant que Telegram affiche "En train d'écrire...", le script patiente
@@ -53,7 +53,7 @@ async def main():
                         # 2. PAUSE ALÉATOIRE ENTRE CHAQUE MESSAGE
                         # -----------------------------------------------------------------
                         # Fini les 3s fixes. On simule le temps qu'un humain met à changer de chat (3 à 7 secondes)
-                        pause_inter_message = random.uniform(2.5, 5.5)
+                        pause_inter_message = random.uniform(2.5, 4.0)
                         await asyncio.sleep(pause_inter_message)
                         
                     except FloodWaitError as e:
@@ -70,7 +70,7 @@ async def main():
             # -----------------------------------------------------------------
             # Très important pour réinitialiser les compteurs de requêtes de Telegram.
             # Le script s'endort entre 45 secondes et 1 minute 30 avant de recommencer.
-            pause_cycle = random.uniform(6.0, 15.0)
+            pause_cycle = random.uniform(6.0, 10.0)
             print(f"\n💤 Cycle terminé. L'humain lâche son téléphone pendant {round(pause_cycle, 1)}s...\n")
             await asyncio.sleep(pause_cycle)
 
