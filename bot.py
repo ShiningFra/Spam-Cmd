@@ -1,7 +1,6 @@
 import os
 import asyncio
 import random
-import sys
 from dotenv import load_dotenv
 from telethon import TelegramClient
 from telethon.errors import FloodWaitError
@@ -12,74 +11,65 @@ API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 TARGET_BOT = os.getenv("TARGET_BOT")
 
-# Récupération et conversion des IDs de groupes
 GROUP_I = int(os.getenv("GROUPI")) if os.getenv("GROUPI") else None
 GROUP_II = int(os.getenv("GROUPII")) if os.getenv("GROUPII") else None
 
 if not all([API_ID, API_HASH, TARGET_BOT, GROUP_I, GROUP_II]):
     raise ValueError("❌ Erreur : Variables manquantes dans le fichier .env")
 
-# Liste des cibles : Privé + Groupe I + Groupe II
+# Liste des cibles : Privé, Groupe I, Groupe II
 TARGET_CHATS = [TARGET_BOT, GROUP_I, GROUP_II]
 
-# Tes commandes
+# Liste des commandes
 COMMANDS_LIST = ["/acc", "/roue 1000", "/mescontratsbc"]
 
-# Ton délai de 0.6s (qui passe bien grâce à l'alternance des 3 salons)
+# Délai de base entre CHAQUE message envoyé (très rapide car on change de chat à chaque fois)
 BASE_DELAY = 0.6
 
 async def main():
     client = TelegramClient('session_userbot', int(API_ID), API_HASH)
     await client.start()
-    print("🟩 Userbot de REFORME lancé avec protection maximale !")
-    print(f"📢 Rotation sur 3 salons : Privé, Groupe I, Groupe II")
-    print("⚠️ Sécurité : Au moindre FloodWait, le script s'arrêtera immédiatement.\n")
+    print("🟩 Userbot lancé en mode DISPERSION TOTALE !")
+    print("🔄 Ordre d'envoi croisé pour tromper l'anti-spam.")
+    print("👉 CTRL + C pour couper.\n")
 
     try:
         while True:
-            for chat_id in TARGET_CHATS:
-                print(f"💬 Cible actuelle : {chat_id}")
+            # On prend une commande après l'autre
+            for commande in COMMANDS_LIST:
                 
-                for commande in COMMANDS_LIST:
+                # Et on l'envoie dans chaque chat un par un avant de passer à la commande suivante
+                for chat_id in TARGET_CHATS:
                     try:
-                        print(f"  ✈️ Envoi : {commande}")
+                        print(f"✈️ Chat: {chat_id} ➔ Commande: {commande}")
                         await client.send_message(chat_id, commande)
                         
-                        # Délai de 0.6s avec une micro-variation humaine pour le camouflage
+                        # Petite variation humaine de sécurité
                         actual_delay = BASE_DELAY + random.uniform(0.0, 0.15)
                         await asyncio.sleep(actual_delay)
                         
                     except FloodWaitError as e:
-                        # 🚨 BLINDAGE ANTI-BAN : Arrêt immédiat au premier signal de Telegram
                         security_time = e.seconds + 10
                         print("\n" + "!" * 50)
-                        print("🚨 DANGER : TELEGRAM A ÉMIS UN SIGNAL DE FLOOD !")
-                        print(f"Le serveur demandait : {e.seconds} secondes d'attente.")
-                        print(f"Marge de sécurité appliquée : REPOS TOTAL DE {security_time} SECONDES.")
-                        print("Arrêt immédiat du script pour protéger ton compte.")
+                        print(f"⚠️ FLOODWAIT DETECTÉ : Repos de {security_time}s...")
                         print("!" * 50 + "\n")
-                        
-                        # Déconnexion propre de la session pour ne pas corrompre la clé d'authentification
-                        await client.disconnect()
-                        
-                        # Simulation du repos de sécurité avant fermeture définitive du terminal
-                        print(f"⏳ Extinction dans {security_time} secondes...")
                         await asyncio.sleep(security_time)
-                        sys.exit(1) # Fermeture forcée du programme Python
+                        print("▶️ Reprise du cycle...\n")
                         
                     except Exception as e:
-                        print(f"❌ Erreur mineure (Bot ou réseau) : {e}")
+                        print(f"❌ Erreur mineure : {e}")
                         await asyncio.sleep(1.5)
                         
-            # Pause de 1.5 seconde avant de relancer la boucle complète (Privé -> G1 -> G2)
-            await asyncio.sleep(1.5)
+            # Pause de fin de cycle avant de recommencer toute la matrice
+            print("💤 Cycle complet terminé. Pause de 2 secondes...")
+            await asyncio.sleep(2.0)
 
     except KeyboardInterrupt:
-        print("\n🟥 Arrêt manuel demandé (CTRL+C).")
+        print("\n🟥 Arrêt manuel.")
     finally:
         if client.is_connected():
             await client.disconnect()
-        print("🏁 Userbot déconnecté en toute sécurité.")
+        print("🏁 Déconnecté.")
 
 if __name__ == '__main__':
     asyncio.run(main())
