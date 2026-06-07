@@ -1,3 +1,4 @@
+# Ignorer le fichier de session Telethon
 *.session
 *.session-journal
 # Byte-compiled / optimized / DLL files
