@@ -18,7 +18,7 @@ if not all([API_ID, API_HASH, TARGET_BOT, GROUP_I, GROUP_II]):
 
 # Liste de tes chats et de tes commandes
 TARGET_CHATS = [TARGET_BOT, GROUP_I, GROUP_II]
-COMMANDS_LIST = ["/acc", "/roue 1000", "/mescontratsbc"]
+COMMANDS_LIST = ["/roue 1000", "/roue 1000", "/roue 1000"]
 
 async def main():
     client = TelegramClient('session_userbot', int(API_ID), API_HASH)
