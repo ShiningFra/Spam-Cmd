@@ -22,7 +22,7 @@ COMMANDS_LIST = [
     "/acc",
     "/daily",
     "/work",
-    "/pay @AsunaYuukiFra 1",
+    "/candidatures",
     "/richlist",
     "/blackjack 1000",
     "/roulette 1000 impair",
